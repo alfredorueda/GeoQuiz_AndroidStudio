@@ -14,8 +14,10 @@ public class QuizActivity extends AppCompatActivity {
 
     private Button mTrueButton;
     private Button mFalseButton;
-    private Button mNextButton;
+    private Button mResetButton;
+    private Button mExitButton;
     private TextView mQuestionTextView;
+    int acertadas = 0, incorrectas = 0;
 
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_oceans, true),
@@ -28,8 +30,13 @@ public class QuizActivity extends AppCompatActivity {
     private int mCurrentIndex = 0;
 
     private void updateQuestion() {
-        int question = mQuestionBank[mCurrentIndex].getTextResId();
-        mQuestionTextView.setText(question);
+        if (mCurrentIndex < mQuestionBank.length){
+            int question = mQuestionBank[mCurrentIndex].getTextResId();
+            mQuestionTextView.setText(question);
+        }else{
+            mQuestionTextView.setText("FIN, has acertado "+acertadas+" y has fallado "+incorrectas);
+            altButtonsState(true);
+        }
     }
 
     private void checkAnswer(boolean userPressedTrue) {
@@ -39,13 +46,33 @@ public class QuizActivity extends AppCompatActivity {
 
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast;
+            acertadas++;
         } else {
             messageResId = R.string.incorrect_toast;
+            incorrectas++;
         }
-
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
                 .show();
+
+        mCurrentIndex++;
+        updateQuestion();
     }
+
+    private void altButtonsState(boolean visibility){
+        if (visibility){
+            mTrueButton.setVisibility(View.GONE);
+            mFalseButton.setVisibility(View.GONE);
+            mResetButton.setVisibility(View.VISIBLE);
+            mExitButton.setVisibility(View.VISIBLE);
+        }else{
+            mTrueButton.setVisibility(View.VISIBLE);
+            mFalseButton.setVisibility(View.VISIBLE);
+            mResetButton.setVisibility(View.GONE);
+            mExitButton.setVisibility(View.GONE);
+        }
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +97,22 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-        mNextButton = (Button) findViewById(R.id.next_button);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
+        mResetButton = (Button) findViewById(R.id.reset_button);
+        mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-                updateQuestion();
+            public void onClick(View v) {
+                acertadas = 0;
+                incorrectas = 0;
+                mCurrentIndex = 0;
+                altButtonsState(false);
+            }
+        });
+
+        mExitButton = (Button) findViewById(R.id.exit_button);
+        mExitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

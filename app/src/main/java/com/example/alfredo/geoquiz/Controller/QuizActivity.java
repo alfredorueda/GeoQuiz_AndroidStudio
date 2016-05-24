@@ -67,6 +67,7 @@ public class QuizActivity extends AppCompatActivity {
         }else{
             mTrueButton.setVisibility(View.VISIBLE);
             mFalseButton.setVisibility(View.VISIBLE);
+            updateQuestion();
             mResetButton.setVisibility(View.GONE);
             mExitButton.setVisibility(View.GONE);
         }
